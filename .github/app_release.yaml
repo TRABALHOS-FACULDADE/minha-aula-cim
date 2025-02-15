@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - main
+name: Minha Aula CIM APP
+
+jobs:
+  build:
+    name: Build and release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter test -j 6
+      - run: flutter build apk --release --split-per-abi
+
+      - name: Push to release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/release/*"
+          tag: v1.0.1
+          token: ${{ secrets.RELEASE_KEY }}
