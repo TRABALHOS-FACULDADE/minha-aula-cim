@@ -21,7 +21,7 @@ class _InserirRaPageState extends State<InserirRaPage> {
       final value = controller.value;
 
       if (value != null && value.isNotEmpty) {
-        Modular.to.pushNamed(
+        Modular.to.navigate(
           './aulas',
         );
       }
@@ -63,7 +63,7 @@ class _InserirRaPageState extends State<InserirRaPage> {
                     onPressed: () async {
                       await controller.salvarRA(raTextController.text);
 
-                      Modular.to.pushNamed(
+                      Modular.to.navigate(
                         './aulas',
                       );
                     },
