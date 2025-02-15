@@ -1,7 +1,4 @@
 on:
-  commit:
-    branches:
-      - main
   push:
     branches:
       - main
