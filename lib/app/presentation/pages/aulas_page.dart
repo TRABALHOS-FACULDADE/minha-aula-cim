@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../utils/base_shimmer.dart';
 import '../view_model/minha_aula_notifier.dart';
 import '../view_model/ra_controller.dart';
+import '../widgets/aula_card_widget.dart';
 
 class AulasPage extends StatefulWidget {
   const AulasPage({super.key});
@@ -17,7 +19,9 @@ class _AulasPageState extends State<AulasPage> {
 
   @override
   void initState() {
-    notifier.listarAulas('019.705118');
+    if (controller.value == null) return;
+
+    notifier.listarAulas(controller.value!);
 
     super.initState();
   }
@@ -38,7 +42,7 @@ class _AulasPageState extends State<AulasPage> {
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
         ),
@@ -58,174 +62,43 @@ class _AulasPageState extends State<AulasPage> {
 
                   if (aulas.isEmpty) {
                     return Center(
-                      child: Text('Sem aula hoje'),
+                      child: Text(
+                          'Nenhuma aula a ser listada.\nCaso haja algum engano, comunique à secretaria ou ao coordenador do seu curso.'),
                     );
                   }
 
                   return Expanded(
                     child: ListView.builder(
                       itemCount: aulas.length,
-                      itemBuilder: (_, index) {
-                        final aula = aulas[index];
-
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 6,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey[100],
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                aula.disciplina,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time_outlined,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  Text(
-                                    'Horário: ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${aula.horaInicial} - ${aula.horaFinal}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Divider(
-                                color: Colors.blueAccent,
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.domain,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  Text(
-                                    'Prédio: ',
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    aula.predio,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_city,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  Text(
-                                    'Bloco: ',
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    aula.bloco,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  Text(
-                                    'Sala: ',
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      aula.sala,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.person_2_outlined,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  Text(
-                                    'Professor(a): ',
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      aula.professor,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                      itemBuilder: (_, index) => AulaCardWidget(
+                        aulas[index],
+                      ),
                     ),
                   );
                 }
 
-                return const SizedBox.shrink();
+                return Expanded(
+                  child: ListView(
+                    children: [
+                      ...List.generate(
+                        5,
+                        (_) => BaseShimmer(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 6,
+                            ),
+                            height: 100,
+                            width: MediaQuery.sizeOf(context).width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
           ],

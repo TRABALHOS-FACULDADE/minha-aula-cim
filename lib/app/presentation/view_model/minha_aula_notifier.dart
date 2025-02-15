@@ -11,12 +11,8 @@ final class MinhaAulaNotifier extends ValueNotifier<MinhaAulaState> {
 
   Future<void> listarAulas(String ra) async {
     value = ((await Modular.get<ListarAulasDoAluno>().call(ra)).fold(
-      (aulas) {
-        return MinhaAulaSuccessState(aulas);
-      },
-      (falha) {
-        return MinhaAulaErrorState(falha.toString());
-      },
+      MinhaAulaSuccessState.new,
+      (falha) => MinhaAulaErrorState(falha.toString()),
     ));
   }
 }
