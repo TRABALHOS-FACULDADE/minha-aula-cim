@@ -1,7 +1,7 @@
 final class AulaFetch {
-  final List<Aula> aulas;
+  final List<Aula> content;
 
-  AulaFetch(this.aulas);
+  AulaFetch(this.content);
 
   factory AulaFetch.fromJson(dynamic list) => AulaFetch(
         (list as List<dynamic>).map(Aula.fromJson).toList(),

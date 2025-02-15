@@ -8,4 +8,9 @@ final class MinhaAulaRepository {
 
   Future<AulaFetch> listarAulasDoAluno(String ra) async =>
       datasource.listarAulasDoAluno(ra);
+
+  Future<void> salvarRADoAluno(String ra) async =>
+      datasource.salvarRADoAluno(ra);
+
+  Future<String?> pegarRADoAluno() async => datasource.pegarRADoAluno();
 }
