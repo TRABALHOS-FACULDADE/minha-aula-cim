@@ -42,7 +42,7 @@ class _AulasPageState extends State<AulasPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
         ),

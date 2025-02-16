@@ -16,21 +16,6 @@ class _InserirRaPageState extends State<InserirRaPage> {
   final controller = Modular.get<RAController>();
 
   @override
-  void initState() {
-    controller.pegarRA().then((_) {
-      final value = controller.value;
-
-      if (value != null && value.isNotEmpty) {
-        Modular.to.navigate(
-          './aulas',
-        );
-      }
-    });
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
@@ -46,6 +31,7 @@ class _InserirRaPageState extends State<InserirRaPage> {
                 children: [
                   TextFormField(
                     controller: raTextController,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6),
