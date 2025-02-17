@@ -18,7 +18,10 @@ class AulaCardWidget extends StatelessWidget {
         horizontal: 6,
       ),
       decoration: BoxDecoration(
-        color: Colors.blueGrey[100],
+        border: Border.all(
+          color: Colors.blueAccent,
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Column(

@@ -19,7 +19,11 @@ class _AulasPageState extends State<AulasPage> {
 
   @override
   void initState() {
-    if (controller.value == null) return;
+    if (controller.value == null) {
+      Modular.to.navigate('../');
+
+      return;
+    }
 
     notifier.listarAulas(controller.value!);
 
@@ -35,7 +39,7 @@ class _AulasPageState extends State<AulasPage> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => Modular.to.pushNamed('./settings'),
             icon: Icon(
               Icons.settings_outlined,
             ),
@@ -61,17 +65,51 @@ class _AulasPageState extends State<AulasPage> {
                   final aulas = state.aulas.content;
 
                   if (aulas.isEmpty) {
-                    return Center(
-                      child: Text(
-                          'Nenhuma aula a ser listada.\nCaso haja algum engano, comunique à secretaria ou ao coordenador do seu curso.'),
+                    return SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: Column(
+                        children: [
+                          Center(
+                            heightFactor: 4,
+                            child: Text(
+                              'Nenhuma aula a ser listada.\n\nCaso haja algum engano, comunique à secretaria ou ao coordenador do seu curso.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.blueAccent,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async => notifier.listarAulas(
+                              controller.value!,
+                            ),
+                            child: Text(
+                              'Recarregar',
+                              style: TextStyle(
+                                decorationColor: Colors.blueAccent,
+                                decoration: TextDecoration.underline,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }
 
                   return Expanded(
-                    child: ListView.builder(
-                      itemCount: aulas.length,
-                      itemBuilder: (_, index) => AulaCardWidget(
-                        aulas[index],
+                    child: RefreshIndicator(
+                      color: Colors.blueAccent,
+                      onRefresh: () async => notifier.listarAulas(
+                        controller.value!,
+                      ),
+                      child: ListView.builder(
+                        itemCount: aulas.length,
+                        itemBuilder: (_, index) => AulaCardWidget(
+                          aulas[index],
+                        ),
                       ),
                     ),
                   );

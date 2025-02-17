@@ -30,9 +30,12 @@ class _InserirRaPageState extends State<InserirRaPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextFormField(
+                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
                     controller: raTextController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      labelText: 'Insira seu RA',
+                      hintText: 'Ex: 012.345678',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
