@@ -5,6 +5,8 @@ import '../../utils/base_shimmer.dart';
 import '../view_model/minha_aula_notifier.dart';
 import '../view_model/ra_controller.dart';
 import '../widgets/aula_card_widget.dart';
+import '../widgets/bottom_sheets/settings_modal_bottom_sheets.dart';
+import '../widgets/bottom_sheets/utilizar_outro_ra_modal_bottom_sheet.dart';
 
 class AulasPage extends StatefulWidget {
   const AulasPage({super.key});
@@ -33,13 +35,48 @@ class _AulasPageState extends State<AulasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(
-          controller.value!,
-        ),
+        title: ValueListenableBuilder(
+            valueListenable: controller,
+            builder: (_, __, ___) {
+              return Row(
+                children: [
+                  Image.asset(
+                    'assets/logo.png',
+                    height: 80,
+                    width: 80,
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    controller.value!,
+                  ),
+                ],
+              );
+            }),
         actions: [
           IconButton(
-            onPressed: () => Modular.to.pushNamed('./settings'),
+            onPressed: () async => await showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              builder: (_) => SettingsModalBottomSheets(
+                acaoTrocarRA: () async {
+                  Navigator.pop(context);
+
+                  final ra = await showModalBottomSheet<String>(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (_) => const UtilizarOutroRaModalBottomSheet(),
+                  );
+
+                  if (ra != null) {
+                    await controller.salvarRA(ra);
+
+                    await notifier.listarAulas(ra);
+                  }
+                },
+              ),
+            ),
             icon: Icon(
               Icons.settings_outlined,
             ),
@@ -65,37 +102,64 @@ class _AulasPageState extends State<AulasPage> {
                   final aulas = state.aulas.content;
 
                   if (aulas.isEmpty) {
-                    return SingleChildScrollView(
+                    return ListView(
                       physics: const NeverScrollableScrollPhysics(),
-                      child: Column(
-                        children: [
-                          Center(
-                            heightFactor: 4,
-                            child: Text(
-                              'Nenhuma aula a ser listada.\n\nCaso haja algum engano, comunique à secretaria ou ao coordenador do seu curso.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.blueAccent,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 20,
+                      shrinkWrap: true,
+                      children: [
+                        const SizedBox(height: 16),
+                        Text(
+                          'Nenhuma aula a ser listada.\n\nCaso haja algum engano, comunique à secretaria ou ao coordenador do seu curso.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async => notifier.listarAulas(
+                                controller.value!,
+                              ),
+                              child: Text(
+                                'Recarregar',
+                                style: TextStyle(
+                                  decorationColor: Colors.blueAccent,
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.blueAccent,
+                                ),
                               ),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () async => notifier.listarAulas(
-                              controller.value!,
-                            ),
-                            child: Text(
-                              'Recarregar',
-                              style: TextStyle(
-                                decorationColor: Colors.blueAccent,
-                                decoration: TextDecoration.underline,
-                                color: Colors.blueAccent,
+                            ElevatedButton(
+                              onPressed: () async {
+                                final ra = await showModalBottomSheet<String>(
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (_) =>
+                                      const UtilizarOutroRaModalBottomSheet(),
+                                );
+
+                                if (ra != null) {
+                                  await controller.salvarRA(ra);
+
+                                  await notifier.listarAulas(ra);
+                                }
+                              },
+                              child: Text(
+                                'Utilizar outro RA',
+                                style: TextStyle(
+                                  decorationColor: Colors.blueAccent,
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.blueAccent,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     );
                   }
 

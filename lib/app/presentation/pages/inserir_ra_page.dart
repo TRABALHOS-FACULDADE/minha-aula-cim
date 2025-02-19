@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:minha_aula_cim/app/utils/is_valid_ra.dart';
 
 import '../view_model/ra_controller.dart';
 
@@ -15,6 +16,8 @@ class _InserirRaPageState extends State<InserirRaPage> {
 
   final controller = Modular.get<RAController>();
 
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,41 +29,75 @@ class _InserirRaPageState extends State<InserirRaPage> {
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                    controller: raTextController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Insira seu RA',
-                      hintText: 'Ex: 012.345678',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/logo.png'),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                      controller: raTextController,
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
+                      decoration: InputDecoration(
+                        counter: const SizedBox.shrink(),
+                        labelText: 'Insira seu RA',
+                        hintText: 'Ex: 012.345678',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await controller.salvarRA(raTextController.text);
+                      onChanged: (_) => formKey.currentState?.validate(),
+                      validator: (_) {
+                        if (raTextController.text.length > 4 &&
+                            !raTextController.text.contains('.')) {
+                          return 'Insira um RA válido! Ex: 012.345678';
+                        }
 
-                      Modular.to.navigate(
-                        './aulas',
-                      );
-                    },
-                    child: Text(
-                      'Ver aulas',
+                        return null;
+                      },
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    ValueListenableBuilder(
+                      valueListenable: raTextController,
+                      builder: (_, __, ___) => ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            raTextController.text.isValidRA
+                                ? Colors.blueAccent
+                                : Colors.grey[300],
+                          ),
+                        ),
+                        onPressed: raTextController.text.isValidRA
+                            ? () async {
+                                await controller
+                                    .salvarRA(raTextController.text);
+
+                                Modular.to.navigate(
+                                  './aulas',
+                                );
+                              }
+                            : null,
+                        child: Text(
+                          'Ver minhas aulas',
+                          style: TextStyle(
+                            color: raTextController.text.isValidRA
+                                ? Colors.white
+                                : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }),
