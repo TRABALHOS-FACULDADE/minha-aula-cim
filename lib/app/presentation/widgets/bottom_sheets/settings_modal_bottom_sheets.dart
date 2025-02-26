@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'sobre_a_api_modal_bottom_sheet.dart';
+import 'sobre_o_aplicativo_modal_bottom_sheet.dart';
 
 class SettingsModalBottomSheets extends StatelessWidget {
   final VoidCallback acaoTrocarRA;
@@ -39,48 +41,22 @@ class SettingsModalBottomSheets extends StatelessWidget {
           title: Text('Utilizar outro RA'),
         ),
         ListTile(
-          onTap: !kDebugMode
-              ? null
-              : () async => showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (_) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [],
-                    ),
-                  ),
+          onTap: () async => showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (_) => const SobreAApiModalBottomSheet(),
+          ),
           leading: Icon(Icons.api),
           title: Text('API'),
-          trailing: Text(
-            '(Em construção)',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.red,
-            ),
-          ),
         ),
         ListTile(
-          onTap: !kDebugMode
-              ? null
-              : () async => showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (_) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [],
-                    ),
-                  ),
+          onTap: () async => showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (_) => const SobreOAplicativoModalBottomSheet(),
+          ),
           leading: Icon(Icons.info_outline),
           title: Text('Sobre o aplicativo'),
-          trailing: Text(
-            '(Em construção)',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.red,
-            ),
-          ),
         ),
       ],
     );
